@@ -46,25 +46,39 @@ def resize_window(window, x, y):
     except Exception as e:
         print(f"Error {e}")
 
+
 # Screenshots given window and puts it in the "Screenshots" folder
 def screenshot_window(window, name, retImg):
     try:
+        #Gets top left for region
         x,y = window.topleft
-        
+
+        #If not given a name, window title + time of screenshot is given as name.
         if name is None:
-            str(name)
-            name = f"{window.title}-{str.replace(str.replace(str(datetime.now().time()), ".", "_"),":","-")}.png"
+            time_stamp = str.replace(datetime.now().strftime("%D-%H-%M-%S"),"/","_")
+            name = f"{window.title}-{time_stamp}.png"
+        
+        # Getting the path for "Screenshots folder"
         absDir = os.path.abspath(__file__)
-        relDir = f"{os.path.dirname(os.path.dirname(absDir))}\\Screenshots"
+        relDir = os.path.join(os.path.dirname(os.path.dirname(absDir)),"Screenshots")
+        
+        os.makedirs(relDir, exist_ok=True) # If it doesn't exist create new folder
+
+        #Create path for image directory/name
         fullPath = os.path.join(relDir, name)
         screenshot_image = pyautogui.screenshot(imageFilename=fullPath, region=[x,y,window.width,window.height],allScreens=False)
-        if retImg:
+        
+        if retImg: # If image needs to be returned, return (for image detection or smth)
             return screenshot_image
+        
     except Exception as e:
-        print(f"Error {e}")
+        print(f"{window.title} experienced an error when screenshotting : {e}")
 
 def clear_screenshot_cache():
     screen_path = f"{os.path.dirname(os.path.dirname(os.path.abspath(__file__)))}\\Screenshots"
     for e in os.listdir(screen_path):
         os.remove(f"{screen_path}\\{e}")
 
+clear_screenshot_cache()
+window = gw.getActiveWindow()
+screenshot_window(window=window, name=None, retImg=False)
