@@ -1,0 +1,60 @@
+class GlobalState:
+    def __init__(self):
+        self.state = {}
+        self.listener = {}
+
+    def set(self, key, value): #KV pair of state
+        old_val = self.state.get(key) # get old value
+        self.state[key] = value
+        #Check if change in value
+        if old_val != value:
+            for callback in self.listener.get(key, []):
+                callback(value)
+    def watch(self, key, callback):
+        self.listener.setdefault(key, []).append(callback)
+    def get_value(self, key) -> object:
+        value = self.state.get(key)
+        return value
+
+
+global_state = GlobalState()
+
+global_state.set("state", False)
+global_state.set("task", None)
+global_state.set("rewards", 0)
+global_state.set("keybind", 'l')
+
+#----------------------------------------------
+from globalStates import global_state
+
+
+# Dungeon Anniversary
+global_state.set("dungeon_anniversary_placements", [(369,369),(369,369)])
+global_state.set("dungeon_anniversary_abilities", [(1,True,"Dio-Wounded"),(1,True,"Broly")])
+#--------------------------------------------------
+#This is a test sample
+
+from Tools import avControl as avC
+from Tools import avMethods as avM
+from Tools import botTools as bt
+
+#Config
+import config
+from globalStates import global_state as gs
+
+#Inputs
+import keyboard
+import webhook
+from datetime import datetime
+import time
+
+
+g_toggle = True
+def toggle_g():
+    global g_toggle
+    g_toggle = not g_toggle
+
+keyboard.add_hotkey(gs.get_value("keybind"), toggle_g)
+
+def run_task():
+    start_time = 
