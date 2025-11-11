@@ -28,9 +28,17 @@ global_state.set("keybind", 'l')
 from globalStates import global_state
 
 
-# Dungeon Anniversary
-global_state.set("dungeon_anniversary_placements", [(369,369),(369,369)])
-global_state.set("dungeon_anniversary_abilities", [(1,True,"Dio-Wounded"),(1,True,"Broly")])
+# Dungeon Anniversary, example from this:
+
+# (unit_slot,(cordx,cordy)), 
+global_state.set("dungeon_anniversary_placements", [(1,(369,369)),(1,(369,369)),(1,(369,369)),(2,(369,369))])
+
+# (unit_placement, auto_abilitiy, what_ability), 
+# Dio: do Dio-args, args being any debuff
+global_state.set("dungeon_anniversary_abilities", [(0,False,"Dio-Wounded"),(1,False,"Broly")])
+
+#(wave_num,([placeable_units, x, x...)), 
+global_state.set("dungeon_anniversary_waveplace", [(0,(0,1,2,3)),(1,(1,))])
 #--------------------------------------------------
 #This is a test sample
 
@@ -49,6 +57,9 @@ from datetime import datetime
 import time
 
 
+
+
+
 g_toggle = True
 def toggle_g():
     global g_toggle
@@ -56,5 +67,35 @@ def toggle_g():
 
 keyboard.add_hotkey(gs.get_value("keybind"), toggle_g)
 
-def run_task():
-    start_time = 
+def run_task(context: str):
+    start_of_run = datetime.now()
+    num_runs = 0
+    wins = 0
+    loss = 0
+    rewardsmin = 0
+    rewardsmax = 0
+    unit_placements = gs.get_value(f"{context}_placements")
+    unit_abilities = gs.get_value(f"{context}_abilities")
+    unit_waves = gs.get_value(f"{context}_waveplace")
+    if unit_placements is None:
+        return "Task Error"
+    while g_toggle:
+        print(f"Starting run ({context}), press {gs.get_value("keybind")} to kill task")
+        #avM.wait_start()
+        # INSERT CLICK POS
+        print("Found Start, now starting")
+        for placement in unit_waves:
+            wave_num = placement[0]
+            if len(placement[1]) > 1:
+                for unit in placement[1]:
+                    #avM.abs_place(unit_placements[unit][0], NumPlacement=1, Positions=unit_placements[unit][1])
+                    print(f"At {wave_num}, placed unit {unit_placements[unit][0]} at {unit_placements[unit][1]}")
+            else:
+                ...
+                print(f"At {wave_num}, placed unit {unit_placements[placement[1][0]][0]} at {unit_placements[placement[1][0]][1]}")
+
+
+        time.sleep(5000)
+
+
+run_task("dungeon_anniversary")
